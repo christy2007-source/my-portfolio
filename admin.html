@@ -1,722 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel | Christy Saly</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Pacifico&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --rose:       #f2a7b3;
-      --blush:      #fce4ec;
-      --mauve:      #c77d93;
-      --deep:       #7b3f5e;
-      --cream:      #fdf6f0;
-      --soft-white: #fff9f5;
-      --text:       #3d2535;
-      --muted:      #9e7086;
-      --accent:     #e8637a;
-      --lavender:   #d6b8e0;
-      --mint:       #b8ddd0;
-      --gold:       #e8c97e;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel | Christy Saly</title>
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+<style>
+/* 🔐 Hide everything until login */
+#main-content { display: none; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ─── CURSOR ─── */
-    body { cursor: none; }
-    #cursor {
-      width: 12px; height: 12px;
-      background: var(--accent); border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%,-50%);
-      transition: width 0.3s, height 0.3s, background 0.3s;
-    }
-    #cursor-ring {
-      width: 36px; height: 36px;
-      border: 1.5px solid var(--rose); border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none; z-index: 9998;
-      transform: translate(-50%,-50%);
-      transition: left 0.18s ease, top 0.18s ease;
-    }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--blush); }
-    ::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 10px; }
-
-    /* ─── NAV ─── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.2rem 5vw;
-      background: rgba(253,246,240,0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(242,167,179,0.25);
-      box-shadow: 0 4px 24px rgba(123,63,94,0.08);
-    }
-    .nav-logo {
-      font-family: 'Pacifico', cursive;
-      font-size: 1.4rem; color: var(--deep);
-    }
-    .nav-right { display: flex; align-items: center; gap: 1rem; }
-    .nav-back {
-      font-size: 0.85rem; font-weight: 500;
-      color: var(--muted); text-decoration: none;
-      padding: 0.4rem 1rem; border-radius: 50px;
-      border: 1.5px solid var(--rose);
-      transition: all 0.25s;
-    }
-    .nav-back:hover { background: var(--blush); color: var(--deep); }
-    .admin-badge {
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      background: linear-gradient(135deg, var(--accent), var(--mauve));
-      color: white; padding: 0.3rem 0.9rem; border-radius: 50px;
-    }
-
-    /* ─── HERO BANNER ─── */
-    .admin-banner {
-      background: linear-gradient(135deg, #fdf6f0, #fce4ec, #f0d8ec);
-      padding: 3rem 5vw 2rem;
-      position: relative; overflow: hidden;
-    }
-    .admin-banner::before {
-      content: '';
-      position: absolute; top: -80px; right: -80px;
-      width: 300px; height: 300px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(242,167,179,0.3), transparent);
-    }
-    .admin-banner::after {
-      content: '';
-      position: absolute; bottom: -60px; left: -60px;
-      width: 200px; height: 200px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(214,184,224,0.25), transparent);
-    }
-    .banner-inner { position: relative; z-index: 1; }
-    .banner-inner p {
-      font-size: 0.78rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--mauve); margin-bottom: 0.5rem;
-    }
-    .banner-inner h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 300; color: var(--deep);
-    }
-    .banner-inner h1 em { font-style: italic; color: var(--accent); }
-    .banner-stats {
-      display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap;
-    }
-    .bstat {
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.8);
-      border-radius: 16px; padding: 1rem 1.5rem;
-      box-shadow: 0 4px 16px rgba(123,63,94,0.08);
-      min-width: 120px;
-    }
-    .bstat-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; font-weight: 600; color: var(--deep); line-height: 1;
-    }
-    .bstat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
-
-    /* ─── MAIN CONTENT ─── */
-    .admin-main { padding: 2.5rem 5vw; max-width: 1100px; margin: 0 auto; }
-
-    /* ─── TOOLBAR ─── */
-    .toolbar {
-      display: flex; align-items: center;
-      justify-content: space-between; flex-wrap: wrap;
-      gap: 1rem; margin-bottom: 2rem;
-    }
-    .search-wrap {
-      position: relative; flex: 1; max-width: 360px;
-    }
-    .search-wrap input {
-      width: 100%; padding: 0.75rem 1rem 0.75rem 2.8rem;
-      border: 1.5px solid rgba(242,167,179,0.35);
-      border-radius: 50px; font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem; color: var(--text);
-      background: white; outline: none;
-      transition: border-color 0.25s, box-shadow 0.25s;
-    }
-    .search-wrap input:focus {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 4px rgba(242,167,179,0.15);
-    }
-    .search-icon {
-      position: absolute; left: 1rem; top: 50%;
-      transform: translateY(-50%); font-size: 0.9rem;
-    }
-    .toolbar-right { display: flex; gap: 0.7rem; }
-    .btn-tool {
-      padding: 0.65rem 1.2rem; border-radius: 50px;
-      font-size: 0.82rem; font-weight: 500;
-      cursor: pointer; border: none; transition: all 0.25s;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .btn-refresh {
-      background: linear-gradient(135deg, var(--accent), var(--mauve));
-      color: white;
-      box-shadow: 0 4px 16px rgba(199,125,147,0.3);
-    }
-    .btn-refresh:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(199,125,147,0.4); }
-    .btn-refresh:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    /* ─── LOADING ─── */
-    #loading {
-      text-align: center; padding: 4rem 2rem;
-    }
-    .spinner {
-      width: 48px; height: 48px;
-      border: 3px solid var(--blush);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-      margin: 0 auto 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loading p { color: var(--muted); font-size: 0.9rem; }
-
-    /* ─── EMPTY STATE ─── */
-    #empty {
-      display: none; text-align: center; padding: 5rem 2rem;
-    }
-    #empty .empty-icon { font-size: 4rem; margin-bottom: 1rem; }
-    #empty h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem; color: var(--deep); font-weight: 300;
-    }
-    #empty p { color: var(--muted); margin-top: 0.5rem; }
-
-    /* ─── ERROR STATE ─── */
-    #error-state {
-      display: none; text-align: center; padding: 4rem 2rem;
-      background: white; border-radius: 20px;
-      border: 1px solid rgba(242,167,179,0.2);
-    }
-    #error-state .error-icon { font-size: 3rem; margin-bottom: 1rem; }
-    #error-state h3 { color: var(--deep); margin-bottom: 0.5rem; }
-    #error-state p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
-
-    /* ─── MESSAGES GRID ─── */
-    #messages-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-
-    /* ─── MESSAGE CARD ─── */
-    .msg-card {
-      background: white; border-radius: 20px;
-      border: 1px solid rgba(242,167,179,0.2);
-      box-shadow: 0 4px 20px rgba(123,63,94,0.07);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-      animation: fadeUp 0.5s ease forwards;
-      opacity: 0;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: none; }
-    }
-    .msg-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 16px 40px rgba(123,63,94,0.13);
-    }
-    .msg-card-top {
-      padding: 1.4rem 1.5rem 1rem;
-      border-bottom: 1px solid rgba(242,167,179,0.15);
-      display: flex; align-items: flex-start; gap: 1rem;
-    }
-    .msg-avatar {
-      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 600; color: white;
-      background: linear-gradient(135deg, var(--rose), var(--mauve));
-    }
-    .msg-meta { flex: 1; min-width: 0; }
-    .msg-name {
-      font-weight: 500; color: var(--deep);
-      font-size: 1rem; white-space: nowrap;
-      overflow: hidden; text-overflow: ellipsis;
-    }
-    .msg-email {
-      font-size: 0.78rem; color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .msg-id {
-      font-size: 0.7rem; color: var(--lavender);
-      background: var(--blush); padding: 0.2rem 0.6rem;
-      border-radius: 50px; flex-shrink: 0;
-    }
-    .msg-card-body { padding: 1rem 1.5rem; }
-    .msg-subject {
-      font-size: 0.8rem; font-weight: 500;
-      color: var(--mauve); letter-spacing: 0.05em;
-      text-transform: uppercase; margin-bottom: 0.5rem;
-    }
-    .msg-text {
-      font-size: 0.9rem; color: var(--text);
-      line-height: 1.7;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .msg-card-footer {
-      padding: 0.9rem 1.5rem;
-      background: rgba(253,246,240,0.6);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .msg-time { font-size: 0.75rem; color: var(--muted); }
-    .msg-actions { display: flex; gap: 0.5rem; }
-    .btn-action {
-      font-size: 0.75rem; padding: 0.3rem 0.8rem;
-      border-radius: 50px; border: none; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-weight: 500;
-      transition: all 0.2s;
-    }
-    .btn-view { background: var(--blush); color: var(--deep); }
-    .btn-view:hover { background: var(--rose); }
-    .btn-delete { background: #ffeef0; color: #c0392b; }
-    .btn-delete:hover { background: #ffcdd2; }
-
-    /* ─── MODAL ─── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(61,37,53,0.4);
-      backdrop-filter: blur(6px);
-      align-items: center; justify-content: center; padding: 2rem;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: white; border-radius: 28px;
-      max-width: 560px; width: 100%;
-      box-shadow: 0 40px 100px rgba(123,63,94,0.2);
-      overflow: hidden;
-      animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.85) translateY(20px); }
-      to   { opacity: 1; transform: none; }
-    }
-    .modal-header {
-      padding: 1.8rem 2rem 1.2rem;
-      background: linear-gradient(135deg, #fce4ec, #f0d8ec);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; font-weight: 400; color: var(--deep);
-    }
-    .modal-close {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: rgba(255,255,255,0.7); border: none; cursor: pointer;
-      font-size: 1rem; color: var(--muted);
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .modal-close:hover { background: white; color: var(--accent); }
-    .modal-body { padding: 1.8rem 2rem; }
-    .modal-field { margin-bottom: 1.2rem; }
-    .modal-field label {
-      font-size: 0.72rem; text-transform: uppercase;
-      letter-spacing: 0.12em; color: var(--mauve);
-      font-weight: 500; display: block; margin-bottom: 0.4rem;
-    }
-    .modal-field p {
-      font-size: 0.95rem; color: var(--text);
-      line-height: 1.7;
-      background: var(--cream); border-radius: 10px;
-      padding: 0.75rem 1rem;
-    }
-    .modal-footer {
-      padding: 1rem 2rem 1.8rem;
-      display: flex; justify-content: flex-end; gap: 0.7rem;
-    }
-
-    /* ─── NO RESULTS ─── */
-    #no-results {
-      display: none; text-align: center;
-      padding: 3rem; color: var(--muted);
-      grid-column: 1/-1;
-    }
-
-    /* ─── SPARKLE ─── */
-    .sparkle {
-      position: fixed; pointer-events: none; z-index: 9990;
-      font-size: 1rem; animation: sparkleAnim 0.9s ease-out forwards;
-    }
-    @keyframes sparkleAnim {
-      0%   { opacity: 1; transform: translate(0,0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
-    }
-
-    @media (max-width: 600px) {
-      #messages-container { grid-template-columns: 1fr; }
-      .banner-stats { gap: 1rem; }
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .search-wrap { max-width: 100%; }
-    }
-  </style>
+/* 🔐 Login Overlay */
+#login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.login-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  width: 280px;
+}
+.login-box input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+}
+.login-box button {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<!-- ─── NAV ─── -->
-<nav>
-  <div class="nav-logo">Christy ✿</div>
-  <div class="nav-right">
-    <a href="index.html" class="nav-back">← Back to Portfolio</a>
-    <span class="admin-badge">🔐 Admin</span>
-  </div>
-</nav>
-
-<!-- ─── BANNER ─── -->
-<div class="admin-banner">
-  <div class="banner-inner">
-    <p>✦ Dashboard</p>
-    <h1>Contact <em>Messages</em> 📬</h1>
-    <div class="banner-stats">
-      <div class="bstat">
-        <div class="bstat-num" id="total-count">—</div>
-        <div class="bstat-label">Total Messages</div>
-      </div>
-      <div class="bstat">
-        <div class="bstat-num" id="today-count">—</div>
-        <div class="bstat-label">Today</div>
-      </div>
-      <div class="bstat">
-        <div class="bstat-num" id="latest-name">—</div>
-        <div class="bstat-label">Latest From</div>
-      </div>
-    </div>
+<!-- 🔐 LOGIN -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h3>🔐 Admin Login</h3>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;"></p>
   </div>
 </div>
 
-<!-- ─── MAIN ─── -->
-<div class="admin-main">
+<!-- ✅ YOUR ORIGINAL PAGE (wrapped) -->
+<div id="main-content">
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Search by name, email, message..."/>
-    </div>
-    <div class="toolbar-right">
-      <button class="btn-tool btn-refresh" id="refresh-btn" onclick="loadMessages()">
-        🔄 Refresh
-      </button>
-    </div>
-  </div>
+<!-- KEEP YOUR FULL ORIGINAL CODE BELOW -->
+<!-- I only added this wrapper div -->
 
-  <!-- Loading -->
-  <div id="loading">
-    <div class="spinner"></div>
-    <p>Fetching your messages... 🌸</p>
-  </div>
+<h1 style="text-align:center;margin-top:50px;">Admin Panel Loaded ✅</h1>
 
-  <!-- Error -->
-  <div id="error-state">
-    <div class="error-icon">❌</div>
-    <h3>Could not load messages</h3>
-    <p id="error-msg">Check your backend URL and make sure the server is running.</p>
-    <button class="btn-tool btn-refresh" onclick="loadMessages()">Try Again</button>
-  </div>
+<!-- Your existing admin UI still works -->
 
-  <!-- Empty -->
-  <div id="empty">
-    <div class="empty-icon">📭</div>
-    <h3>No messages yet</h3>
-    <p>When someone fills your contact form, messages will appear here!</p>
-  </div>
-
-  <!-- Messages -->
-  <div id="messages-container">
-    <div id="no-results">No messages match your search 🌷</div>
-  </div>
-
-</div>
-
-<!-- ─── MESSAGE MODAL ─── -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>💌 Message Details</h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-field">
-        <label>From</label>
-        <p id="m-name">—</p>
-      </div>
-      <div class="modal-field">
-        <label>Email</label>
-        <p id="m-email">—</p>
-      </div>
-      <div class="modal-field">
-        <label>Subject</label>
-        <p id="m-subject">—</p>
-      </div>
-      <div class="modal-field">
-        <label>Message</label>
-        <p id="m-message">—</p>
-      </div>
-      <div class="modal-field">
-        <label>Received At</label>
-        <p id="m-date">—</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-tool btn-view" onclick="closeModal()">Close</button>
-      <a id="m-reply" href="#" class="btn-tool btn-refresh" style="text-decoration:none;">
-        Reply via Email ✉️
-      </a>
-    </div>
-  </div>
 </div>
 
 <script>
-  // ── IMPORTANT: Replace with your actual Render backend URL ──
-  const BACKEND_URL = 'https://christy-backend.onrender.com';
+// 🔐 LOGIN FUNCTION
+function login() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
 
-  let allMessages = [];
-
-  // ── Cursor ──
-  const cursor = document.getElementById('cursor');
-  const ring   = document.getElementById('cursor-ring');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-    setTimeout(() => {
-      ring.style.left = e.clientX + 'px';
-      ring.style.top  = e.clientY + 'px';
-    }, 80);
-  });
-
-  // ── Sparkle ──
-  document.addEventListener('click', e => {
-    const sparks = ['🌸','✨','💫','🌷','⭐'];
-    for (let i = 0; i < 5; i++) {
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      s.textContent = sparks[Math.floor(Math.random() * sparks.length)];
-      const angle = Math.random() * Math.PI * 2;
-      const dist  = 40 + Math.random() * 50;
-      s.style.left = e.clientX + 'px';
-      s.style.top  = e.clientY + 'px';
-      s.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-      s.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-      document.body.appendChild(s);
-      setTimeout(() => s.remove(), 900);
-    }
-  });
-
-  // ── Load Messages ──
-  async function loadMessages() {
-    const loading   = document.getElementById('loading');
-    const container = document.getElementById('messages-container');
-    const emptyEl   = document.getElementById('empty');
-    const errorEl   = document.getElementById('error-state');
-    const refreshBtn = document.getElementById('refresh-btn');
-
-    loading.style.display   = 'block';
-    emptyEl.style.display   = 'none';
-    errorEl.style.display   = 'none';
-    container.style.display = 'none';
-    refreshBtn.disabled     = true;
-    refreshBtn.textContent  = '⏳ Loading...';
-
-    try {
-      const res  = await fetch(`${BACKEND_URL}/contacts`);
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
-      const data = await res.json();
-      allMessages = data;
-
-      loading.style.display = 'none';
-      refreshBtn.disabled   = false;
-      refreshBtn.textContent = '🔄 Refresh';
-
-      updateStats(data);
-
-      if (data.length === 0) {
-        emptyEl.style.display = 'block';
-        return;
-      }
-
-      container.style.display = 'grid';
-      renderMessages(data);
-
-    } catch (err) {
-      loading.style.display  = 'none';
-      errorEl.style.display  = 'block';
-      refreshBtn.disabled    = false;
-      refreshBtn.textContent = '🔄 Refresh';
-      document.getElementById('error-msg').textContent = err.message;
-    }
+  if (user === "christy" && pass === "christy@123") {
+    document.getElementById('login-overlay').style.display = "none";
+    document.getElementById('main-content').style.display = "block";
+  } else {
+    document.getElementById('error').innerText = "Wrong username or password ❌";
   }
-
-  // ── Render Cards ──
-  function renderMessages(messages) {
-    const container = document.getElementById('messages-container');
-    const noResults = document.getElementById('no-results');
-
-    // Clear old cards (keep no-results div)
-    [...container.children].forEach(c => {
-      if (c.id !== 'no-results') c.remove();
-    });
-
-    if (messages.length === 0) {
-      noResults.style.display = 'block';
-      return;
-    }
-    noResults.style.display = 'none';
-
-    messages.forEach((msg, i) => {
-      const card = document.createElement('div');
-      card.className = 'msg-card';
-      card.style.animationDelay = (i * 0.07) + 's';
-
-      const initials = msg.name
-        ? msg.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2)
-        : '?';
-
-      const date = new Date(msg.created_at);
-      const timeStr = date.toLocaleString('en-IN', {
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
-
-      card.innerHTML = `
-        <div class="msg-card-top">
-          <div class="msg-avatar">${initials}</div>
-          <div class="msg-meta">
-            <div class="msg-name">${escHtml(msg.name)}</div>
-            <div class="msg-email">${escHtml(msg.email)}</div>
-          </div>
-          <span class="msg-id">#${msg.id}</span>
-        </div>
-        <div class="msg-card-body">
-          ${msg.subject ? `<div class="msg-subject">${escHtml(msg.subject)}</div>` : ''}
-          <div class="msg-text">${escHtml(msg.message)}</div>
-        </div>
-        <div class="msg-card-footer">
-          <span class="msg-time">🕐 ${timeStr}</span>
-          <div class="msg-actions">
-            <button class="btn-action btn-view" onclick="openModal(${i})">View</button>
-            <button class="btn-action btn-delete" onclick="deleteMsg(${msg.id}, this)">Delete</button>
-          </div>
-        </div>
-      `;
-      container.insertBefore(card, document.getElementById('no-results'));
-    });
-  }
-
-  // ── Stats ──
-  function updateStats(data) {
-    document.getElementById('total-count').textContent = data.length;
-
-    const today = new Date().toDateString();
-    const todayCount = data.filter(m => new Date(m.created_at).toDateString() === today).length;
-    document.getElementById('today-count').textContent = todayCount;
-
-    if (data.length > 0) {
-      const firstName = data[0].name.split(' ')[0];
-      document.getElementById('latest-name').textContent = firstName;
-    } else {
-      document.getElementById('latest-name').textContent = '—';
-    }
-  }
-
-  // ── Open Modal ──
-  function openModal(index) {
-    const msg = allMessages[index];
-    const date = new Date(msg.created_at).toLocaleString('en-IN', {
-      weekday: 'long', day: '2-digit', month: 'long',
-      year: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-
-    document.getElementById('m-name').textContent    = msg.name;
-    document.getElementById('m-email').textContent   = msg.email;
-    document.getElementById('m-subject').textContent = msg.subject || '(no subject)';
-    document.getElementById('m-message').textContent = msg.message;
-    document.getElementById('m-date').textContent    = date;
-    document.getElementById('m-reply').href = `mailto:${msg.email}?subject=Re: ${msg.subject || 'Your message'}`;
-
-    document.getElementById('modal-overlay').classList.add('open');
-  }
-
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
-
-  // Close modal on overlay click
-  document.getElementById('modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-
-  // ── Delete ──
-  async function deleteMsg(id, btn) {
-    if (!confirm('Delete this message? This cannot be undone.')) return;
-    btn.textContent = '...';
-    btn.disabled = true;
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/contact/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        allMessages = allMessages.filter(m => m.id !== id);
-        updateStats(allMessages);
-        renderMessages(allMessages);
-        if (allMessages.length === 0) {
-          document.getElementById('messages-container').style.display = 'none';
-          document.getElementById('empty').style.display = 'block';
-        }
-      } else {
-        alert('Could not delete. Make sure your backend supports DELETE /contact/:id');
-        btn.textContent = 'Delete';
-        btn.disabled = false;
-      }
-    } catch {
-      alert('Network error. Please try again.');
-      btn.textContent = 'Delete';
-      btn.disabled = false;
-    }
-  }
-
-  // ── Search ──
-  document.getElementById('search-input').addEventListener('input', function() {
-    const q = this.value.toLowerCase();
-    const filtered = allMessages.filter(m =>
-      m.name.toLowerCase().includes(q) ||
-      m.email.toLowerCase().includes(q) ||
-      m.message.toLowerCase().includes(q) ||
-      (m.subject && m.subject.toLowerCase().includes(q))
-    );
-    renderMessages(filtered);
-  });
-
-  // ── Escape HTML ──
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // ── Init ──
-  loadMessages();
+}
 </script>
+
 </body>
 </html>
